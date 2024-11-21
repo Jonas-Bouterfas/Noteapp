@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -35,6 +36,7 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
     var title by remember { mutableStateOf("") }
     var subtitle by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val scrollState = androidx.compose.foundation.rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -47,10 +49,7 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            validateAndAddTodo(title, subtitle, todoList, context, navController)
-                            navController.popBackStack()
-                        }
+                        onClick = { navController.popBackStack() }
                     ) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
@@ -61,13 +60,14 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
                 )
             )
         },
-        containerColor = androidx.compose.ui.graphics.Color(0xFFF1F8E9) // Light Green Background
+        containerColor = androidx.compose.ui.graphics.Color(0xFFF1F8E9)
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(16.dp)
+                .verticalScroll(scrollState)
         ) {
             Text(
                 text = "What's on your mind today?",
@@ -76,7 +76,6 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Styled TextField for Title
             TextField(
                 value = title,
                 onValueChange = { title = it },
@@ -90,7 +89,6 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Styled TextField for Subtitle
             TextField(
                 value = subtitle,
                 onValueChange = { subtitle = it },
@@ -104,7 +102,6 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Styled Button
             Button(
                 onClick = {
                     validateAndAddTodo(title, subtitle, todoList, context, navController)
@@ -112,7 +109,7 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp), // More rounded corners
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
                 colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                     containerColor = androidx.compose.ui.graphics.Color(0xFF4CAF50),
                     contentColor = androidx.compose.ui.graphics.Color.White
@@ -127,7 +124,6 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
     }
 }
 
-// Validation logic remains the same
 private fun validateAndAddTodo(
     title: String,
     subtitle: String,
@@ -154,5 +150,6 @@ private fun validateAndAddTodo(
         }
     }
 }
+
 
 
