@@ -11,11 +11,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.inote.AddTodoScreen
+import com.example.inote.EditTodoScreen
+import com.example.inote.TodoListScreen
 
 data class TodoItem(
     val id: Int,
@@ -41,155 +45,3 @@ fun TodoApp() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TodoListScreen(navController: NavController, todoList: MutableList<TodoItem>) {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Todo List") })
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("addTodo") }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Todo")
-            }
-        }
-    ) { padding ->
-        LazyColumn(modifier = Modifier.padding(padding)) {
-            items(todoList) { item ->
-                ListItem(headlineText = { /*TODO*/ })
-                ListItem(
-                    headlineText = {
-                        Checkbox(
-                            checked = item.check.value,
-                            onCheckedChange = {
-                                item.check.value = !item.check.value
-                        })},
-                    overlineText = { Text(item.title) },
-                    supportingText = { Text(item.subtitle)},
-                    trailingContent = {
-                        Row {
-                            IconButton(
-                                onClick = { navController.navigate("editTodo/${item.id}") }
-                            ) {
-                                Icon(Icons.Filled.Edit, contentDescription = "Edit Todo")
-                            }
-                            IconButton(
-                                onClick = { todoList.remove(item) }
-                            ) {
-                                Icon(Icons.Filled.Delete, contentDescription = "Delete Todo")
-                            }
-                        }
-                    }
-                )
-                Divider()
-
-            }
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>) {
-    var title by remember { mutableStateOf("") }
-    var subtitle by remember { mutableStateOf("") }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Add Todo") },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (title.isNotBlank() && subtitle.isNotBlank()) {
-                                todoList.add(TodoItem(id = todoList.size, title = title, subtitle = subtitle))
-                                navController.popBackStack()
-                            }
-                        }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-        ) {
-            TextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Todo") }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = subtitle,
-                onValueChange = { subtitle = it },
-                label = { Text("Details") }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                if (title.isNotBlank() && subtitle.isNotBlank()) {
-                    todoList.add(TodoItem(id = todoList.size, title = title, subtitle = subtitle))
-                    navController.popBackStack()
-                }
-            }) {
-                Text("Add Todo")
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditTodoScreen(navController: NavController, todoItem: TodoItem) {
-    var title by remember { mutableStateOf(todoItem.title) }
-    var subtitle by remember { mutableStateOf(todoItem.subtitle) }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Edit Todo") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-        ) {
-            TextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Todo") }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = subtitle,
-                onValueChange = { subtitle = it },
-                label = { Text("Details") }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                if (title.isNotBlank() && subtitle.isNotBlank()) {
-                    todoItem.title = title
-                    todoItem.subtitle = subtitle
-                    navController.popBackStack()
-                }
-            }) {
-                Text("Save Todo")
-            }
-        }
-    }
-}
