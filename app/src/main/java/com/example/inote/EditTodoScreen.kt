@@ -1,28 +1,36 @@
 package com.example.inote
 
 import TodoItem
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
@@ -32,28 +40,24 @@ import androidx.navigation.NavController
 fun EditTodoScreen(navController: NavController, todoItem: TodoItem) {
     var title by remember { mutableStateOf(todoItem.title) }
     var subtitle by remember { mutableStateOf(todoItem.subtitle) }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        "Edit Task 🛠️",
-                        style = androidx.compose.material3.MaterialTheme.typography.titleLarge
-                    )
-                },
+                title = { Text("Edit Task 🛠️", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                colors = androidx.compose.material3.TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = androidx.compose.ui.graphics.Color(0xFF512DA8), // Deep Purple
-                    titleContentColor = androidx.compose.ui.graphics.Color.White
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Color(0xFF512DA8), // Deep Purple
+                    titleContentColor = Color.White
                 )
             )
         },
-        containerColor = androidx.compose.ui.graphics.Color(0xFFEDE7F6) // Light Purple Background
+        containerColor = Color(0xFFEDE7F6) // Light Purple Background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -62,9 +66,9 @@ fun EditTodoScreen(navController: NavController, todoItem: TodoItem) {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Make changes to your task:",
-                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
-                color = androidx.compose.ui.graphics.Color(0xFF311B92) // Dark Purple
+                text = "Update your task details below:",
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color(0xFF311B92) // Dark Purple
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -73,10 +77,10 @@ fun EditTodoScreen(navController: NavController, todoItem: TodoItem) {
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Task Title") },
-                colors = androidx.compose.material3.TextFieldDefaults.textFieldColors(
-                    containerColor = androidx.compose.ui.graphics.Color.White,
-                    focusedIndicatorColor = androidx.compose.ui.graphics.Color(0xFF512DA8),
-                    cursorColor = androidx.compose.ui.graphics.Color(0xFF512DA8)
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White,
+                    focusedIndicatorColor = Color(0xFF512DA8),
+                    cursorColor = Color(0xFF512DA8)
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -87,38 +91,43 @@ fun EditTodoScreen(navController: NavController, todoItem: TodoItem) {
                 value = subtitle,
                 onValueChange = { subtitle = it },
                 label = { Text("Task Details") },
-                colors = androidx.compose.material3.TextFieldDefaults.textFieldColors(
-                    containerColor = androidx.compose.ui.graphics.Color.White,
-                    focusedIndicatorColor = androidx.compose.ui.graphics.Color(0xFF512DA8),
-                    cursorColor = androidx.compose.ui.graphics.Color(0xFF512DA8)
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White,
+                    focusedIndicatorColor = Color(0xFF512DA8),
+                    cursorColor = Color(0xFF512DA8)
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            // Centered Save Button
+            // Save Button
             Button(
                 onClick = {
-                    if (title.isNotBlank() && subtitle.isNotBlank()) {
-                        todoItem.title = title
-                        todoItem.subtitle = subtitle
+                    if (title.length < 3 || title.length > 50 ) {
+                        Toast.makeText(context, "Title must be at least 3 characters long and not more thAN FIFTY CHARACTER", Toast.LENGTH_SHORT).show()
+                    } else if (subtitle.isBlank()) {
+                        Toast.makeText(context, "Task details cannot be empty.", Toast.LENGTH_SHORT).show()
+                    } else if (subtitle.length > 120) {
+                        Toast.makeText(context, "Task details must be under 120 characters.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        todoItem.title = title.trim()
+                        todoItem.subtitle = subtitle.trim()
+                        Toast.makeText(context, "Task updated successfully!", Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
                     }
                 },
                 modifier = Modifier
-                    .fillMaxWidth(0.8f) // Center button with reduced width
-                    .height(60.dp), // Larger button for emphasis
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(30.dp), // Full rounded button
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                    containerColor = androidx.compose.ui.graphics.Color(0xFF512DA8), // Deep Purple
-                    contentColor = androidx.compose.ui.graphics.Color.White
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF512DA8), // Deep Purple
+                    contentColor = Color.White
                 )
             ) {
-                Text(
-                    text = "Save Changes",
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
-                )
+                Text("Save Changes", style = MaterialTheme.typography.bodyLarge)
             }
         }
     }
 }
+
