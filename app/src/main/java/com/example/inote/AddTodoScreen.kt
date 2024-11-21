@@ -39,23 +39,29 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add Todo", style = androidx.compose.material3.MaterialTheme.typography.titleLarge) },
+                title = {
+                    Text(
+                        "Add a New Task 📝",
+                        style = androidx.compose.material3.MaterialTheme.typography.titleLarge
+                    )
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = {
                             validateAndAddTodo(title, subtitle, todoList, context, navController)
+                            navController.popBackStack()
                         }
                     ) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = androidx.compose.material3.TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = androidx.compose.ui.graphics.Color(0xFF6200EA), // Purple
+                    containerColor = androidx.compose.ui.graphics.Color(0xFF4CAF50), // Green
                     titleContentColor = androidx.compose.ui.graphics.Color.White
                 )
             )
         },
-        containerColor = androidx.compose.ui.graphics.Color(0xFFF3F4F6) // Light Gray Background
+        containerColor = androidx.compose.ui.graphics.Color(0xFFF1F8E9) // Light Green Background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -64,9 +70,9 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
                 .padding(16.dp)
         ) {
             Text(
-                text = "Create a new Todo",
+                text = "What's on your mind today?",
                 style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
-                color = androidx.compose.ui.graphics.Color(0xFF6200EA)
+                color = androidx.compose.ui.graphics.Color(0xFF388E3C) // Darker Green
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -74,11 +80,11 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
             TextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Todo Title") },
+                label = { Text("Task Title") },
                 colors = androidx.compose.material3.TextFieldDefaults.textFieldColors(
                     containerColor = androidx.compose.ui.graphics.Color.White,
-                    focusedIndicatorColor = androidx.compose.ui.graphics.Color(0xFF6200EA),
-                    cursorColor = androidx.compose.ui.graphics.Color(0xFF6200EA)
+                    focusedIndicatorColor = androidx.compose.ui.graphics.Color(0xFF4CAF50),
+                    cursorColor = androidx.compose.ui.graphics.Color(0xFF4CAF50)
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -88,11 +94,11 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
             TextField(
                 value = subtitle,
                 onValueChange = { subtitle = it },
-                label = { Text("Details") },
+                label = { Text("Task Details") },
                 colors = androidx.compose.material3.TextFieldDefaults.textFieldColors(
                     containerColor = androidx.compose.ui.graphics.Color.White,
-                    focusedIndicatorColor = androidx.compose.ui.graphics.Color(0xFF6200EA),
-                    cursorColor = androidx.compose.ui.graphics.Color(0xFF6200EA)
+                    focusedIndicatorColor = androidx.compose.ui.graphics.Color(0xFF4CAF50),
+                    cursorColor = androidx.compose.ui.graphics.Color(0xFF4CAF50)
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -106,19 +112,22 @@ fun AddTodoScreen(navController: NavController, todoList: MutableList<TodoItem>)
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp), // More rounded corners
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = androidx.compose.ui.graphics.Color(0xFF4CAF50),
+                    contentColor = androidx.compose.ui.graphics.Color.White
+                )
             ) {
                 Text(
-                    text = "Add Todo",
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
-                    color = androidx.compose.ui.graphics.Color.White
+                    text = "Add Task",
+                    style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
                 )
             }
         }
     }
 }
 
-// Validation logic extracted into a reusable function
+// Validation logic remains the same
 private fun validateAndAddTodo(
     title: String,
     subtitle: String,
@@ -128,16 +137,16 @@ private fun validateAndAddTodo(
 ) {
     when {
         title.isBlank() -> {
-            Toast.makeText(context, "Title cannot be blank.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Don't forget to give your task a title! 😊", Toast.LENGTH_SHORT).show()
         }
         title.length < 3 || title.length > 50 -> {
-            Toast.makeText(context, "Title must be between 3 and 50 characters.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Title must be between 3 and 50 characters long.", Toast.LENGTH_SHORT).show()
         }
         subtitle.isBlank() -> {
-            Toast.makeText(context, "Subtitle cannot be blank.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Add some details to your task! ✍️", Toast.LENGTH_SHORT).show()
         }
         subtitle.length > 120 -> {
-            Toast.makeText(context, "Subtitle must not exceed 120 characters.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Too many details! Keep it under 120 characters. 🚀", Toast.LENGTH_SHORT).show()
         }
         else -> {
             todoList.add(TodoItem(id = todoList.size, title = title, subtitle = subtitle))
@@ -145,4 +154,5 @@ private fun validateAndAddTodo(
         }
     }
 }
+
 
